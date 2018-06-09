@@ -1,0 +1,199 @@
+﻿@model WebApplication11.ViewModels.EventsReportViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<section class="content-header">
+    <h1>
+        Извештај
+        <small>настани филтрирани според датум на започнување и завршување</small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Пребарај настани</h3>
+            </div>
+            <div class="box-body">
+                <form method="get" asp-controller="Report" asp-action="Index">
+                    <div class="form-group col-xs-12 col-sm-6 col-md-3">
+                        <label>Започнува после</label>
+
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="date" class="form-control pull-right" asp-for="Search.StartAfter">
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-12 col-sm-6 col-md-3">
+                        <label>Започнува пред</label>
+
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="date" class="form-control pull-right" asp-for="Search.StartBefore">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-12 col-sm-6 col-md-3">
+                        <label>Завршува после</label>
+
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="date"   class="form-control pull-right" asp-for="Search.EndAfter">
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-12 col-sm-6 col-md-3">
+                        <label>Завршува пред</label>
+
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="date" class="form-control pull-right" asp-for="Search.EndBefore">
+                        </div>
+                    </div>
+
+                    <input type="hidden" asp-for="Search.Page"/>
+
+                    <div class="col-xs-12">
+                        <button class="btn btn-primary pull-right" type="submit"><i class="fa fa-search"></i> Пребарај</button>
+                    </div>
+                </form>
+                
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="box box-danger">
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>#</th>
+                            <th>Име</th>
+                            <th>Започнува на</th>
+                            <th>Завршува на</th>
+                            <th>Прогрес</th>
+                            <th>Процент</th>
+
+                        </tr>
+                        @foreach (Events e in Model.EventsList.Events)
+                        {
+
+                            double totalSeconds = e.EndsAt.Subtract(e.StartsAt).TotalSeconds;
+                            double elapsedSeconds = DateTime.Now.Subtract(e.StartsAt).TotalSeconds;
+
+                            double percent = (elapsedSeconds / totalSeconds) * 100;
+                            percent = percent > 100 ? 100 : percent;
+                            string style = percent.ToString().Replace(",", ".") + "%";
+                            string progressClass = "progress-bar-danger";
+                            string badgeClass = "bg-red";
+                            string badgeText = decimal.Ceiling((decimal)percent) + "%";
+
+                            if(percent >= 25 && percent < 50)
+                            {
+                                progressClass = "progress-bar-warning";
+                                badgeClass = "bg-yellow";
+                            }
+                            else if (percent >= 50 && percent < 75)
+                            {
+                                progressClass = "progress-bar-primary";
+                                badgeClass = "bg-light-blue";
+                            }
+                            else
+                            {
+                                progressClass = "progress-bar-success";
+                                badgeClass = "bg-green";
+
+                            }
+                        <tr>
+                            <td>@e.Id</td>
+                            <td>@(e.Title.Length > 40 ? e.Title.Substring(0, 40) + "..." : e.Title)</td>
+                            <td>
+                                @e.StartsAt.ToShortDateString()
+                            </td>
+                            <td>@e.EndsAt.ToShortDateString()</td>
+                            <td>
+                                <div class="progress progress-xs progress-striped active" style="width:350px;">
+                                    <div class="progress-bar @progressClass" style="width: @style"></div>
+                                </div>
+                                
+                            </td>
+                            <td><span class="badge @badgeClass">@badgeText</span></td>
+                        </tr>
+}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+                <form method="get" asp-controller="Report" asp-action="Index" id="report-pagination-search-form">
+                    <input type="hidden" asp-for="Search.StartAfter" />
+                    <input type="hidden" asp-for="Search.StartBefore" />
+                    <input type="hidden" asp-for="Search.EndAfter" />
+                    <input type="hidden" asp-for="Search.EndBefore" />
+                    <input type="hidden" asp-for="Search.Page"  id="page-field"/>
+                    <ul class="pagination pagination-sm no-margin pull-right" id="report-pagination">
+
+                        @for (int i = 1; i <= Model.EventsList.TotalPages; i++)
+                        {
+                            if (i < 7)
+                            {
+                                <li data-page="@i"><a>@i</a></li>
+                            }
+                            else if (i < 10)
+                            {
+                                <li><a href="#">.</a></li>
+                            }
+                            else if ((i > (Model.EventsList.TotalPages / 2) - 5) && (i < (Model.EventsList.TotalPages / 2) + 5))
+                            {
+                                <li data-page="@i"><a>@i</a></li>
+                            }
+                            else if ((i > (Model.EventsList.TotalPages / 2) + 5) && (i < (Model.EventsList.TotalPages / 2) + 9))
+                            {
+
+                                <li><a href="#">.</a></li>
+                            }
+                            else if (i > Model.EventsList.TotalPages - 5)
+                            {
+
+                                <li data-page="@i"><a>@i</a></li>
+                            }
+                        }
+                        <!-- <li><a href="#">«</a></li>
+        <li><a href="#">@Model.EventsList.CurrentPage</a></li>
+        <li><a href="#">»</a></li>-->
+                    </ul>
+                </form>
+            </div>
+        </div>
+        <!-- /.box -->
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $(document).ready(function(){
+            $("#report-pagination li").click(function () {
+                var pageNumber = $(this).attr("data-page");
+
+                $("#page-field").val(pageNumber);
+                $("#report-pagination-search-form").submit();
+            });
+        
+        });
+    </script>
+
+}

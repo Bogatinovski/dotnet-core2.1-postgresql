@@ -1,0 +1,53 @@
+﻿@model WebApplication11.ViewModels.CreateEventViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<section class="content-header">
+    <h1>
+        Настани
+        <small>@(Model.Id > 0 ? "Уреди постоечки настан" : "Креирај нов настан") </small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title">@(Model.Id > 0 ? "Зачувај" : "Креирај")</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form" asp-action="Create" method="post">
+                <div class="box-body">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="form-group">
+                        <label>Наслов</label>
+                        <input asp-for="Name" class="form-control" placeholder="Внесете наслов на настанот">
+                    </div>
+                    <div class="form-group">
+                        <label>Почетен датум</label>
+                        <input asp-for="StartsAt" class="form-control" placeholder="Внесете почетен датум на настанот">
+                    </div>
+                    <div class="form-group">
+                        <label>Краен датум</label>
+                        <input asp-for="EndsAt" class="form-control" placeholder="Внесете краен датум на настанот">
+                    </div>
+                    <div class="form-group">
+                        <label>Спорт</label>
+                        <select asp-for="SportId" asp-items="Model.Sports.ToList()"></select>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">@(Model.Id > 0 ? "Зачувај" : "Креирај")</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>

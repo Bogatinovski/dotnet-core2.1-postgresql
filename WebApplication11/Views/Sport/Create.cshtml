@@ -1,0 +1,41 @@
+﻿@model WebApplication11.ViewModels.CreateSportViewModel
+
+@{
+    ViewData["Title"] = "Спортови";
+}
+
+
+<section class="content-header">
+    <h1>
+        Настани
+        <small>@(Model.Id > 0 ? "Уреди постоечки спорт" : "Креирај нов спорт") </small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title">@(Model.Id > 0 ? "Зачувај" : "Креирај")</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form" asp-action="Create" method="post">
+                <div class="box-body">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="form-group">
+                        <label>Име</label>
+                        <input asp-for="Title" class="form-control" placeholder="Внесете име на спортот">
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">@(Model.Id > 0 ? "Зачувај" : "Креирај")</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>

@@ -1,0 +1,94 @@
+﻿@model WebApplication11.ViewModels.EventsListViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<section class="content-header">
+    <h1>
+        Настани
+        <small>шифрарник за преглед и менаџирање на настани</small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="box box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Настани</h3>
+                <a asp-action="create" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Додади настан</a>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>#</th>
+                            <th>Име</th>
+                            <th>Спорт</th>
+                            <th>Започнува на</th>
+                            <th>Завршува на</th>
+                            <th>Уреди</th>
+                            <th>Избриши</th>
+                        </tr>
+                        @foreach (Events e in Model.Events)
+                {
+                        <tr>
+                            <td>@e.Id</td>
+                            <td>@(e.Title.Length > 40 ? e.Title.Substring(0, 40) + "..." : e.Title)</td>
+                            <td>@(e.Sport.Title.Length > 15 ? e.Sport.Title.Substring(0, 15) + "..." : e.Sport.Title)</td>
+                            <td>
+                                @e.StartsAt.ToShortDateString()
+                            </td>
+                            <td>@e.EndsAt.ToShortDateString()</td>
+                            <td><a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-warning"><i class="fa fa-pencil"></i> Уреди</a></td>
+                            <td>
+                                <form method="post" action="/Home/Delete">
+                                    <input type="hidden" name="id" value="@e.Id" />
+                                    <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Избриши</button>
+                                </form>
+                            </td>
+                        </tr>
+}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+                <ul class="pagination pagination-sm no-margin pull-right">
+                    @for(int i=1; i<=Model.TotalPages; i++)
+                    {
+                        if(i < 7)
+                        {
+                            <li><a asp-action="Index" asp-route-page="@i">@i</a></li>
+                        }
+                        else if(i < 10)
+                        {
+                            <li><a href="#">.</a></li>
+                        }
+                        else if((i > (Model.TotalPages / 2) - 5) && (i < (Model.TotalPages / 2) + 5))
+                        {
+                            <li><a asp-action="Index" asp-route-page="@i">@i</a></li>
+                        }
+                        else if((i > (Model.TotalPages / 2) + 5) && (i < (Model.TotalPages / 2) + 9))
+                        {
+
+                             <li><a href="#">.</a></li>
+                        }
+                        else if(i > Model.TotalPages - 5)
+                        {
+
+                            <li><a asp-action="Index" asp-route-page="@i">@i</a></li>
+                        }
+                    }
+                    <!-- <li><a href="#">«</a></li>
+                    <li><a href="#">@Model.CurrentPage</a></li>
+                    <li><a href="#">»</a></li>--> 
+                </ul>
+            </div>
+        </div>
+        <!-- /.box -->
+    </div>
+</section>
