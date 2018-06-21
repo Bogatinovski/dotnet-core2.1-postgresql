@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication11.Models;
+using WebApplication11.QueryTypes;
 using WebApplication11.ViewModels;
 
 namespace WebApplication11.Controllers
@@ -28,34 +29,13 @@ namespace WebApplication11.Controllers
             {
                 model = new SearchEventsViewModel();
             }
-            model.Page = model.Page.HasValue ? (model.Page.Value - 1) : 1;
+            model.Page = model.Page.HasValue ? model.Page.Value : 1;
 
-            EventsListViewModel result = new EventsListViewModel();
-            IQueryable<Events> query = context.Events.Include(e => e.Sport);
-
-            if (model.StartAfter.HasValue)
-            {
-                query = query.Where(e => e.StartsAt >= model.StartAfter.Value);
-            }
-            if (model.StartBefore.HasValue)
-            {
-                query = query.Where(e => e.StartsAt <= model.StartBefore.Value);
-            }
-            if (model.EndAfter.HasValue)
-            {
-                query = query.Where(e => e.EndsAt >= model.EndAfter.Value);
-            }
-            if (model.EndBefore.HasValue)
-            {
-                query = query.Where(e => e.EndsAt <= model.EndBefore.Value);
-            }
-
-            result.TotalEvents = query.Count();
-
-            IEnumerable<Events> events = query.OrderBy(e => e.Id).Skip(model.Page.Value * pageSize).Take(pageSize).ToList();
-
+            EventsReportListViewModel result = new EventsReportListViewModel();
+            IEnumerable<EventsItemReport> events = context.Query<EventsItemReport>().FromSql($"SELECT * FROM get_events_report({model.Page.Value}, {pageSize}, {model.StartAfter}, {model.StartBefore}, {model.EndAfter}, {model.EndBefore})").ToList();
             result.Events = events;
-            
+
+            result.TotalEvents = context.Query<EventsReportCount>().FromSql($"SELECT * FROM get_events_report_count({model.StartAfter}, {model.StartBefore}, {model.EndAfter}, {model.EndBefore})").FirstOrDefault().total;
             result.TotalPages = (result.TotalEvents / pageSize) + ((result.TotalEvents % pageSize != 0) ? 1 : 0);
 
             EventsReportViewModel response = new EventsReportViewModel

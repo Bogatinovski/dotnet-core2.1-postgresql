@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication11.Models;
+using WebApplication11.QueryTypes;
 using WebApplication11.ViewModels;
 
 namespace WebApplication11.Controllers
@@ -24,7 +25,8 @@ namespace WebApplication11.Controllers
         public IActionResult Index(int page = 1)
         {
             EventsListViewModel result = new EventsListViewModel();
-            IEnumerable<Events> events = context.Events.Include(e => e.Sport).OrderBy(e => e.Id).Skip((page-1) * 10).Take(10).ToList();
+            IEnumerable<EventsItem> events = context.Query<EventsItem>().FromSql($"SELECT * FROM get_events({page}, {pageSize})").ToList();
+
             result.Events = events;
             result.TotalEvents = context.Events.Count();
             result.TotalPages = (result.TotalEvents / pageSize) + ((result.TotalEvents % pageSize != 0) ? 1 : 0);

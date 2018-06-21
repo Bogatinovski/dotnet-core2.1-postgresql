@@ -7,7 +7,7 @@ namespace WebApplication11.ViewModels
 {
     public class EventsReportViewModel
     {
-        public EventsListViewModel EventsList { get; set; }
+        public EventsReportListViewModel EventsList { get; set; }
         public SearchEventsViewModel Search { get; set; }
     }
 }

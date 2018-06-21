@@ -1,4 +1,5 @@
 ﻿@model WebApplication11.ViewModels.EventsReportViewModel
+@using WebApplication11.QueryTypes
 
 @{
     ViewData["Title"] = "Home Page";
@@ -88,30 +89,37 @@
                             <th>Процент</th>
 
                         </tr>
-                        @foreach (Events e in Model.EventsList.Events)
+                        @foreach (EventsItemReport e in Model.EventsList.Events)
                         {
-
                             double totalSeconds = e.EndsAt.Subtract(e.StartsAt).TotalSeconds;
                             double elapsedSeconds = DateTime.Now.Subtract(e.StartsAt).TotalSeconds;
 
                             double percent = (elapsedSeconds / totalSeconds) * 100;
                             percent = percent > 100 ? 100 : percent;
-                            string style = percent.ToString().Replace(",", ".") + "%";
+                            percent = percent < 0 ? 0 : percent;
+                            e.CompletedPercentange = (decimal)percent;
+
+                            string style = e.CompletedPercentange.ToString().Replace(",", ".") + "%";
                             string progressClass = "progress-bar-danger";
                             string badgeClass = "bg-red";
-                            string badgeText = decimal.Ceiling((decimal)percent) + "%";
+                            string badgeText = decimal.Ceiling((decimal)e.CompletedPercentange) + "%";
 
-                            if(percent >= 25 && percent < 50)
+                            if(e.CompletedPercentange == 0)
+                            {
+                                progressClass = "progress-bar-default";
+                                badgeClass = "bg-gray";
+                            }
+                            else if (e.CompletedPercentange >= 25 && e.CompletedPercentange < 50)
                             {
                                 progressClass = "progress-bar-warning";
                                 badgeClass = "bg-yellow";
                             }
-                            else if (percent >= 50 && percent < 75)
+                            else if (e.CompletedPercentange >= 50 && e.CompletedPercentange < 100)
                             {
                                 progressClass = "progress-bar-primary";
                                 badgeClass = "bg-light-blue";
                             }
-                            else
+                            else if(e.CompletedPercentange == 100)
                             {
                                 progressClass = "progress-bar-success";
                                 badgeClass = "bg-green";

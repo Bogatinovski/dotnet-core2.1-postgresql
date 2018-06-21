@@ -1,4 +1,6 @@
 ﻿@using WebApplication11.ViewModels
+@using WebApplication11.QueryTypes
+
 @model SportsListViewModel
 
 @{
@@ -31,17 +33,17 @@
                             <th>Уреди</th>
                             <th>Избриши</th>
                         </tr>
-                        @foreach (SingleSportViewModel sport in Model.Sports)
+                        @foreach (SportsItem sport in Model.Sports)
                         {
                                 <tr>
-                                    <td>@sport.Sport.Id</td>
-                                    <td>@sport.Sport.Title</td>
+                                    <td>@sport.Id</td>
+                                    <td>@sport.Title</td>
                            
-                                    <td>@sport.EventsCount</td>
-                                    <td><a asp-controller="Sport" asp-action="Edit" asp-route-id="@sport.Sport.Id" class="btn btn-warning"><i class="fa fa-pencil"></i> Уреди</a></td>
+                                    <td>@sport.Events</td>
+                                    <td><a asp-controller="Sport" asp-action="Edit" asp-route-id="@sport.Id" class="btn btn-warning"><i class="fa fa-pencil"></i> Уреди</a></td>
                                     <td>
                                         <form method="post" asp-controller="Sport" asp-action="Delete">
-                                            <input type="hidden" name="id" value="@sport.Sport.Id" />
+                                            <input type="hidden" name="id" value="@sport.Id" />
                                             <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Избриши</button>
                                         </form>
                                     </td>

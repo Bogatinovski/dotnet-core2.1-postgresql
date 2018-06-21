@@ -1,4 +1,7 @@
-﻿@model WebApplication11.ViewModels.EventsListViewModel
+﻿@using WebApplication11.ViewModels
+@using WebApplication11.QueryTypes
+
+@model WebApplication11.ViewModels.EventsListViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -32,25 +35,25 @@
                             <th>Уреди</th>
                             <th>Избриши</th>
                         </tr>
-                        @foreach (Events e in Model.Events)
-                {
-                        <tr>
-                            <td>@e.Id</td>
-                            <td>@(e.Title.Length > 40 ? e.Title.Substring(0, 40) + "..." : e.Title)</td>
-                            <td>@(e.Sport.Title.Length > 15 ? e.Sport.Title.Substring(0, 15) + "..." : e.Sport.Title)</td>
-                            <td>
-                                @e.StartsAt.ToShortDateString()
-                            </td>
-                            <td>@e.EndsAt.ToShortDateString()</td>
-                            <td><a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-warning"><i class="fa fa-pencil"></i> Уреди</a></td>
-                            <td>
-                                <form method="post" action="/Home/Delete">
-                                    <input type="hidden" name="id" value="@e.Id" />
-                                    <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Избриши</button>
-                                </form>
-                            </td>
-                        </tr>
-}
+                        @foreach (EventsItem e in Model.Events)
+                        {
+                            <tr>
+                                <td>@e.Id</td>
+                                <td>@(e.Title.Length > 40 ? e.Title.Substring(0, 40) + "..." : e.Title)</td>
+                                <td>@(e.Sport.Length > 15 ? e.Sport.Substring(0, 15) + "..." : e.Sport)</td>
+                                <td>
+                                    @e.StartsAt.ToShortDateString()
+                                </td>
+                                <td>@e.EndsAt.ToShortDateString()</td>
+                                <td><a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-warning"><i class="fa fa-pencil"></i> Уреди</a></td>
+                                <td>
+                                    <form method="post" action="/Home/Delete">
+                                        <input type="hidden" name="id" value="@e.Id" />
+                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Избриши</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
 
                     </tbody>
                 </table>
@@ -58,26 +61,26 @@
             <!-- /.box-body -->
             <div class="box-footer clearfix">
                 <ul class="pagination pagination-sm no-margin pull-right">
-                    @for(int i=1; i<=Model.TotalPages; i++)
+                    @for (int i = 1; i <= Model.TotalPages; i++)
                     {
-                        if(i < 7)
+                        if (i < 7)
                         {
                             <li><a asp-action="Index" asp-route-page="@i">@i</a></li>
                         }
-                        else if(i < 10)
+                        else if (i < 10)
                         {
                             <li><a href="#">.</a></li>
                         }
-                        else if((i > (Model.TotalPages / 2) - 5) && (i < (Model.TotalPages / 2) + 5))
+                        else if ((i > (Model.TotalPages / 2) - 5) && (i < (Model.TotalPages / 2) + 5))
                         {
                             <li><a asp-action="Index" asp-route-page="@i">@i</a></li>
                         }
-                        else if((i > (Model.TotalPages / 2) + 5) && (i < (Model.TotalPages / 2) + 9))
+                        else if ((i > (Model.TotalPages / 2) + 5) && (i < (Model.TotalPages / 2) + 9))
                         {
 
-                             <li><a href="#">.</a></li>
+                            <li><a href="#">.</a></li>
                         }
-                        else if(i > Model.TotalPages - 5)
+                        else if (i > Model.TotalPages - 5)
                         {
 
                             <li><a asp-action="Index" asp-route-page="@i">@i</a></li>
@@ -85,7 +88,7 @@
                     }
                     <!-- <li><a href="#">«</a></li>
                     <li><a href="#">@Model.CurrentPage</a></li>
-                    <li><a href="#">»</a></li>--> 
+                    <li><a href="#">»</a></li>-->
                 </ul>
             </div>
         </div>

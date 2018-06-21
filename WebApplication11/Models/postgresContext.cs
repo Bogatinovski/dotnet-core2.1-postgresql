@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using WebApplication11.QueryTypes;
 
 namespace WebApplication11.Models
 {
@@ -222,6 +223,11 @@ namespace WebApplication11.Models
             modelBuilder.HasSequence<int>("tags_id_seq");
 
             modelBuilder.HasSequence<int>("users_id_seq");
+
+            modelBuilder.Query<SportsItem>();
+            modelBuilder.Query<EventsItem>();
+            modelBuilder.Query<EventsItemReport>();
+            modelBuilder.Query<EventsReportCount>();
         }
     }
 }
